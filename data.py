@@ -1,36 +1,75 @@
-from torchvision import datasets
-from torch.utils.data import DataLoader, Dataset
-from torchvision import transforms
-from config import MEAN, STD, BATCH_SIZE
+from typing import Tuple
 
-transform = transforms.Compose(
-    [transforms.ToTensor(), transforms.Normalize(MEAN, STD,)]
+import torch
+from torch.utils.data import DataLoader, random_split
+from torchvision import datasets, transforms
+
+from config import (
+    BATCH_SIZE,
+    DATA_DIR,
+    MEAN,
+    NUM_WORKERS,
+    SEED,
+    STD,
+    VAL_SPLIT,
 )
 
-train_dataset = datasets.CIFAR10("./data", 
-                                 train=True,
-                                 download=True,
-                                 transform=transform)
 
-test_dataset = datasets.CIFAR10("./data",
-                                train=False,
-                                download=False,
-                                transform=transform)
+def _build_transforms(train: bool = True) -> transforms.Compose:
+    if train:
+        return transforms.Compose(
+            [
+                transforms.RandomHorizontalFlip(),
+                transforms.RandomCrop(32, padding=4),
+                transforms.ToTensor(),
+                transforms.Normalize(MEAN, STD),
+            ]
+        )
+    return transforms.Compose(
+        [
+            transforms.ToTensor(),
+            transforms.Normalize(MEAN, STD),
+        ]
+    )
 
-def get_dataloaders(train_dataset, test_dataset, BATCH_SIZE):
-    train_dataloader = DataLoader(train_dataset, 
-                                batch_size=BATCH_SIZE,
-                                shuffle=True)
-    
-    test_dataloader = DataLoader(test_dataset, 
-                            batch_size=BATCH_SIZE, 
-                            shuffle=False)
 
-    return train_dataloader, test_dataloader
+def get_datasets() -> Tuple[datasets.CIFAR10, datasets.CIFAR10, datasets.CIFAR10]:
+    train_full = datasets.CIFAR10(
+        DATA_DIR,
+        train=True,
+        download=True,
+        transform=_build_transforms(train=True),
+    )
+    test_dataset = datasets.CIFAR10(
+        DATA_DIR,
+        train=False,
+        download=True,
+        transform=_build_transforms(train=False),
+    )
+
+    val_size = int(len(train_full) * VAL_SPLIT)
+    train_size = len(train_full) - val_size
+    generator = torch.Generator().manual_seed(SEED)
+    train_dataset, val_dataset = random_split(train_full, [train_size, val_size], generator=generator)
+    return train_dataset, val_dataset, test_dataset
+
+
+def get_dataloaders(batch_size: int = BATCH_SIZE):
+    train_dataset, val_dataset, test_dataset = get_datasets()
+    common_args = {
+        "batch_size": batch_size,
+        "num_workers": NUM_WORKERS,
+        "pin_memory": True,
+        "persistent_workers": NUM_WORKERS > 0,
+    }
+    train_loader = DataLoader(train_dataset, shuffle=True, **common_args)
+    val_loader = DataLoader(val_dataset, shuffle=False, **common_args)
+    test_loader = DataLoader(test_dataset, shuffle=False, **common_args)
+    return train_loader, val_loader, test_loader
+
 
 if __name__ == "__main__":
-    train_dataloader, test_dataloader = get_dataloaders(train_dataset, test_dataset, BATCH_SIZE)
-    train_iter = iter(train_dataloader)
-    images, labels = next(train_iter)
-    print(f"Images Tensor Shape: {images.shape}")
-    print(f"Labels Tensor Shape: {labels.shape}")
+    train_loader, val_loader, test_loader = get_dataloaders()
+    sample_images, sample_labels = next(iter(train_loader))
+    print(f"Train batch: {sample_images.shape}, labels shape: {sample_labels.shape}")
+    print(f"Val size: {len(val_loader.dataset)} | Test size: {len(test_loader.dataset)}")

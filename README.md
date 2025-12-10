@@ -3,11 +3,11 @@
 Skeleton repository for experimenting with a convolutional neural network on CIFAR-10 using PyTorch.
 
 ## Repository layout
-- `data/config.py`: shared configuration (hyperparameters, paths, device selection).
-- `data/data.py`: dataset/transforms and dataloaders.
-- `data/model.py`: CNN architecture.
-- `data/train.py`: training/evaluation loop entrypoint.
-- `data/inference.py`: checkpoint loading and single-image prediction entrypoint.
+- `config.py`: shared configuration (hyperparameters, paths, device selection).
+- `data.py`: dataset/transforms and dataloaders.
+- `model.py`: CNN architecture.
+- `train.py`: training/evaluation loop entrypoint.
+- `inference.py`: checkpoint loading, single-image prediction, or split evaluation.
 
 ## Setup
 ```bash
@@ -17,12 +17,16 @@ pip install torch torchvision torchaudio matplotlib tqdm
 ```
 Add a `requirements.txt` when the code stabilizes so installs can be pinned.
 
-## Usage (once scripts are implemented)
-- Train: `python data/train.py`
-- Inference: `python data/inference.py --checkpoint <path-to-ckpt> --image <path-to-image>`
-Adjust CLI arguments inside the scripts as you add `argparse` options.
+## Usage
+- Train (saves best checkpoint to `checkpoints/cifar10_cnn.pt`):  
+  `python train.py`
+- Evaluate a trained checkpoint on the test split:  
+  `python inference.py --eval-split test`
+- Classify a single image (resized to 32x32):  
+  `python inference.py --image /path/to/image.jpg`
+Pass `--checkpoint` to point at a custom checkpoint path.
 
 ## Next steps
-- Flesh out the five stub modules (model, data, config, train, inference).
-- Add a requirements file and a simple metrics/logging utility.
-- Include basic tests or smoke scripts to verify training and inference flows.
+- Add `requirements.txt` and optionally a conda environment file.
+- Add richer logging (TensorBoard/Weights & Biases) and learning-rate scheduling.
+- Include quick smoke tests to verify dataloaders, forward pass shapes, and a short training step.
