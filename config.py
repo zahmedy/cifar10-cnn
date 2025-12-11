@@ -23,7 +23,7 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 # Training hyperparameters
 # Change these knobs to trade training speed vs. model quality.
 BATCH_SIZE = 64
-EPOCHS = 20
+EPOCHS = 50
 LEARNING_RATE = 1e-3
 WEIGHT_DECAY = 1e-4
 VAL_SPLIT = 0.1
