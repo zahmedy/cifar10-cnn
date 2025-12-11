@@ -12,6 +12,7 @@ from model import Cifar10CNN
 
 
 def _load_checkpoint(path: Path) -> Cifar10CNN:
+    # Restore the trained model weights from disk.
     if not path.exists():
         raise FileNotFoundError(f"Checkpoint not found at {path}. Train the model first.")
 
@@ -24,6 +25,7 @@ def _load_checkpoint(path: Path) -> Cifar10CNN:
 
 
 def _preprocess_image(image_path: Path) -> torch.Tensor:
+    # Resize and normalize an image so it matches the model's expected input.
     transform = transforms.Compose(
         [
             transforms.Resize((32, 32)),
@@ -37,6 +39,7 @@ def _preprocess_image(image_path: Path) -> torch.Tensor:
 
 @torch.no_grad()
 def predict_image(model: Cifar10CNN, image_path: Path) -> Tuple[str, torch.Tensor]:
+    # Run inference on a single image and return the top label and probabilities.
     tensor = _preprocess_image(image_path).to(DEVICE)
     logits = model(tensor)
     pred_idx = logits.argmax(dim=1).item()
@@ -45,6 +48,7 @@ def predict_image(model: Cifar10CNN, image_path: Path) -> Tuple[str, torch.Tenso
 
 @torch.no_grad()
 def evaluate_split(model: Cifar10CNN, split: str = "test") -> Tuple[float, float]:
+    # Compute simple accuracy on the requested dataset split.
     _, val_loader, test_loader = get_dataloaders()
     dataloader = test_loader if split == "test" else val_loader
     total = 0

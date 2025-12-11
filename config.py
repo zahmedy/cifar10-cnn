@@ -13,6 +13,7 @@ def _select_device() -> torch.device:
 
 
 # Paths
+# BASE_DIR points at this folder; we keep data and saved models alongside it.
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 CHECKPOINT_DIR = BASE_DIR / "checkpoints"
@@ -20,6 +21,7 @@ CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # Training hyperparameters
+# Change these knobs to trade training speed vs. model quality.
 BATCH_SIZE = 64
 EPOCHS = 20
 LEARNING_RATE = 1e-3
@@ -30,9 +32,11 @@ NUM_CLASSES = 10
 SEED = 42
 
 # Normalization stats for CIFAR-10
+# These numbers center/scale images so training is stable.
 MEAN = (0.4914, 0.4822, 0.4465)
 STD = (0.2470, 0.2435, 0.2616)
 
+# Human-readable class names for the dataset.
 CLASSES = [
     "airplane",
     "automobile",

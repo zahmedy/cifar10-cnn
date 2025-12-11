@@ -9,6 +9,7 @@ class Cifar10CNN(nn.Module):
 
     def __init__(self, num_classes: int = NUM_CLASSES):
         super().__init__()
+        # Convolution + pooling layers learn visual features from images.
         self.features = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
@@ -18,6 +19,7 @@ class Cifar10CNN(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2),
         )
 
+        # Linear layers turn those features into class scores.
         self.classifier = nn.Sequential(
             nn.Flatten(),
             nn.Linear(64 * 8 * 8, 128),

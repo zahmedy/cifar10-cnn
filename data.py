@@ -16,6 +16,7 @@ from config import (
 
 
 def _build_transforms(train: bool = True) -> transforms.Compose:
+    # Data transforms clean/standardize images; training uses light augmentation.
     if train:
         return transforms.Compose(
             [
@@ -34,6 +35,7 @@ def _build_transforms(train: bool = True) -> transforms.Compose:
 
 
 def get_datasets() -> Tuple[datasets.CIFAR10, datasets.CIFAR10, datasets.CIFAR10]:
+    # Download CIFAR-10 and split the original training set into train/validation.
     train_full = datasets.CIFAR10(
         DATA_DIR,
         train=True,
@@ -55,6 +57,7 @@ def get_datasets() -> Tuple[datasets.CIFAR10, datasets.CIFAR10, datasets.CIFAR10
 
 
 def get_dataloaders(batch_size: int = BATCH_SIZE):
+    # Wrap datasets in DataLoader objects so batches stream efficiently during training.
     train_dataset, val_dataset, test_dataset = get_datasets()
     common_args = {
         "batch_size": batch_size,

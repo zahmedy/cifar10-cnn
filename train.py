@@ -15,6 +15,7 @@ def train_one_epoch(
     optimizer: optim.Optimizer,
     loss_fn: nn.Module,
 ) -> Tuple[float, float]:
+    # One full pass over the training data: learn weights and measure accuracy.
     model.train()
     running_loss = 0.0
     correct = 0
@@ -45,6 +46,7 @@ def evaluate(
     dataloader: torch.utils.data.DataLoader,
     loss_fn: nn.Module,
 ) -> Tuple[float, float]:
+    # Measure accuracy and loss without updating the model.
     model.eval()
     running_loss = 0.0
     correct = 0
@@ -66,6 +68,7 @@ def evaluate(
 
 
 def train():
+    # Get data loaders for train/val, build the model, and pick an optimizer/loss.
     train_loader, val_loader, _ = get_dataloaders()
     model = Cifar10CNN().to(DEVICE)
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
@@ -75,6 +78,7 @@ def train():
     best_path = CHECKPOINT_DIR / "cifar10_cnn.pt"
 
     for epoch in range(1, EPOCHS + 1):
+        # Train for one epoch, then check performance on the validation set.
         train_loss, train_acc = train_one_epoch(model, train_loader, optimizer, loss_fn)
         val_loss, val_acc = evaluate(model, val_loader, loss_fn)
         print(
@@ -84,6 +88,7 @@ def train():
         )
 
         if val_acc > best_val_acc:
+            # Keep the best-performing model so inference uses a good checkpoint.
             best_val_acc = val_acc
             torch.save(
                 {
