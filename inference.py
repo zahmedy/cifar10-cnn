@@ -18,7 +18,14 @@ def _load_checkpoint(path: Path) -> Cifar10CNN:
 
     checkpoint = torch.load(path, map_location=DEVICE)
     model = Cifar10CNN()
-    model.load_state_dict(checkpoint["model_state_dict"])
+    try:
+        # If the model architecture changed after training, this will raise.
+        model.load_state_dict(checkpoint["model_state_dict"])
+    except RuntimeError as exc:
+        raise RuntimeError(
+            "Checkpoint is incompatible with the current model architecture. "
+            "If you changed layer sizes (e.g., number of filters), retrain so a new checkpoint is saved."
+        ) from exc
     model.to(DEVICE)
     model.eval()
     return model
