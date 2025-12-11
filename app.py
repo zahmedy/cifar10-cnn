@@ -33,7 +33,7 @@ def run_inference(image: Image.Image) -> Dict[str, float]:
     return {"label": label, "probs": {cls: float(probs[i]) for i, cls in enumerate(CLASSES)}}
 
 
-def main():
+def main(): 
     st.set_page_config(page_title="CIFAR-10 CNN", page_icon="🖼️")
     st.title("CIFAR-10 CNN Demo")
     st.write("Upload an image to see the predicted CIFAR-10 class and probability breakdown.")
