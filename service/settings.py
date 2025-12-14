@@ -1,24 +1,21 @@
 from pathlib import Path
-import os
 import torch
 
-# Paths
-# BASE_DIR points at this folder; we keep data and saved models alongside it.
-BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "data"
-CHECKPOINT_DIR = BASE_DIR / "checkpoints"
-CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
-DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 def _select_device() -> torch.device:
-    """Prefer CUDA, then MPS, and finally CPU."""
-    if torch.cuda.is_available():
-        return torch.device("cuda")
     if torch.backends.mps.is_available():
         return torch.device("mps")
     return torch.device("cpu")
 
-# Human-readable class names for the dataset.
+
+# Inference device
+DEVICE = _select_device()
+
+# Base paths
+BASE_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = BASE_DIR.parent
+
+# CIFAR-10 class names (order matters)
 CLASSES = [
     "airplane",
     "automobile",
@@ -32,4 +29,10 @@ CLASSES = [
     "truck",
 ]
 
-DEVICE = _select_device()
+# Model checkpoint (one level above this folder)
+CHECKPOINT_PATH = PROJECT_ROOT / "checkpoints" / "cifar10_cnn.pt"
+
+# Human-readable version string
+MODEL_VERSION = "cifar10-cnn-v01"
+
+NUM_CLASSES = 10
