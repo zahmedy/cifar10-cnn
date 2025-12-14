@@ -13,8 +13,8 @@ from typing import Dict
 import streamlit as st
 from PIL import Image
 
-from config import CHECKPOINT_DIR, CLASSES
-from inference import _load_checkpoint, predict_image
+from training.config import CHECKPOINT_DIR, CLASSES
+from training.inference import _load_checkpoint, predict_image
 
 
 @st.cache_resource

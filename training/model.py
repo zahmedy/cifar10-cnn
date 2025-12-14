@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from config import NUM_CLASSES
+from training.config import NUM_CLASSES
 
 
 class Cifar10CNN(nn.Module):

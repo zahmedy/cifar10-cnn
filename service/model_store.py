@@ -1,6 +1,6 @@
 import torch
 
-from model import Cifar10CNN
+from training.model import Cifar10CNN
 from .settings import DEVICE, CHECKPOINT_PATH, MODEL_VERSION
 
 _MODEL = None  # cache the loaded model

@@ -4,9 +4,9 @@ import torch
 from torch import nn, optim
 from typing import Tuple
 
-from config import CHECKPOINT_DIR, DEVICE, EPOCHS, LEARNING_RATE, WEIGHT_DECAY
-from data import get_dataloaders
-from model import Cifar10CNN
+from training.config import CHECKPOINT_DIR, DEVICE, EPOCHS, LEARNING_RATE, WEIGHT_DECAY
+from training.data import get_dataloaders
+from training.model import Cifar10CNN
 
 
 def train_one_epoch(

@@ -4,7 +4,7 @@ import torch
 from torch.utils.data import DataLoader, random_split
 from torchvision import datasets, transforms
 
-from config import (
+from training.config import (
     BATCH_SIZE,
     DATA_DIR,
     MEAN,

@@ -34,5 +34,3 @@ CHECKPOINT_PATH = PROJECT_ROOT / "checkpoints" / "cifar10_cnn.pt"
 
 # Human-readable version string
 MODEL_VERSION = "cifar10-cnn-v01"
-
-NUM_CLASSES = 10

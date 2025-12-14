@@ -6,9 +6,9 @@ import torch
 from PIL import Image
 from torchvision import transforms
 
-from config import CLASSES, DEVICE, MEAN, STD, CHECKPOINT_DIR
-from data import get_dataloaders
-from model import Cifar10CNN
+from training.config import CLASSES, DEVICE, MEAN, STD, CHECKPOINT_DIR
+from training.data import get_dataloaders
+from training.model import Cifar10CNN
 
 
 def _load_checkpoint(path: Path) -> Cifar10CNN:
