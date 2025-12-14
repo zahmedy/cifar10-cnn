@@ -34,3 +34,8 @@ CHECKPOINT_PATH = PROJECT_ROOT / "checkpoints" / "cifar10_cnn.pt"
 
 # Human-readable version string
 MODEL_VERSION = "cifar10-cnn-v01"
+
+# Normalization stats for CIFAR-10
+# These numbers center/scale images so training is stable.
+MEAN = (0.4914, 0.4822, 0.4465)
+STD = (0.2470, 0.2435, 0.2616)
