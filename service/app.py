@@ -30,10 +30,15 @@ import io
 
 
 async def lifespan(app: FastAPI):
-    # load model
+    """Warm the model once at startup so the first request is fast."""
     model = get_model()
-    fake_img = torch.randn([1, 3 , 32 , 32])
-    logits = model(fake_img)
+    model.eval()
+    
+    device = next(model.parameters()).device
+    with torch.no_grad():
+        dummy = torch.randn(1, 3, 32, 32, device=device)
+        _ = model(dummy)
+    yield
 
 app = FastAPI(title="CIFAR-10 Image CLassifier", version=MODEL_VERSION, lifespan=lifespan)
 
@@ -92,5 +97,4 @@ async def predict(file: UploadFile = File(...)):
             model_version=MODEL_VERSION,
             latency_ms=latency
     )
-
 
