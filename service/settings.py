@@ -1,12 +1,10 @@
 from pathlib import Path
 import torch
 
-
 def _select_device() -> torch.device:
     if torch.backends.mps.is_available():
         return torch.device("mps")
     return torch.device("cpu")
-
 
 # Inference device
 DEVICE = _select_device()

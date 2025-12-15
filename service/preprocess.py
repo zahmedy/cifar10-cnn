@@ -1,7 +1,7 @@
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
-from settings import MEAN, STD, DEVICE
+from .settings import MEAN, STD, DEVICE
 
 _transform = transforms.Compose([
     transforms.Resize((32, 32)),

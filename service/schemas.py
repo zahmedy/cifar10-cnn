@@ -10,7 +10,3 @@ class PredictResponse(BaseModel):
         top3: list[TopKItem]
         model_version: str
         latency_ms: float
-
-
-
-
