@@ -1,43 +1,36 @@
-"""
-App.py an API endpoint for Imgae Classfification built with FastAPI
+"""FastAPI service that exposes a CIFAR-10 classifier.
 
-1) POST /predict
-
-Input: an image (simplest: upload a file)
-
-Output:
-top_k class names
-probabilities
-predicted class
-model version
-latency_ms
-
-2) GET /health and GET /ready
-
-/health: process is running
-/ready: model checkpoint loaded successfully
+Endpoints:
+- GET /health: basic liveness check
+- GET /ready: readiness check (model + checkpoint)
+- POST /predict: upload an image, receive top-3 predictions and metadata
 """
 
+import io
+import logging
+import time
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from PIL import Image
+import torch 
+
 from .model_store import get_model
 from .preprocess import preprocess_image
 from .schemas import PredictResponse, TopKItem
 from .settings import CLASSES, MODEL_VERSION, CHECKPOINT_PATH
-import torch 
-import time
-import io
+
+logger = logging.getLogger(__name__)
 
 
 async def lifespan(app: FastAPI):
     """Warm the model once at startup so the first request is fast."""
     model = get_model()
     model.eval()
-    
+
     device = next(model.parameters()).device
     with torch.no_grad():
         dummy = torch.randn(1, 3, 32, 32, device=device)
         _ = model(dummy)
+    logger.info("Model warmed and ready for inference.")
     yield
 
 app = FastAPI(title="CIFAR-10 Image CLassifier", version=MODEL_VERSION, lifespan=lifespan)
@@ -71,7 +64,11 @@ async def predict(file: UploadFile = File(...)):
     curr_time = time.time()
 
     processed_img = preprocess_image(pil_image)
-    model = get_model()
+    try:
+        model = get_model()
+    except Exception as exc:
+        logger.exception("Failed to load model during predict")
+        raise HTTPException(status_code=500, detail="Model not available") from exc
     
     with torch.no_grad():
         logits = model(processed_img)
@@ -97,4 +94,3 @@ async def predict(file: UploadFile = File(...)):
             model_version=MODEL_VERSION,
             latency_ms=latency
     )
-

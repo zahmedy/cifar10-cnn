@@ -3,3 +3,5 @@ torchvision
 torchaudio
 streamlit
 pillow
+fastapi
+uvicorn
